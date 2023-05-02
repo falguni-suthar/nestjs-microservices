@@ -1,0 +1,15 @@
+# versoning and metadata
+.git
+.gitignore
+.dockerignore
+
+# build dependencies 
+dist.do
+node_modules
+
+# env
+*.env
+
+# misk
+.eslintrc.js
+.README.md
