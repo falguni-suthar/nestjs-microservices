@@ -4,7 +4,7 @@ services:
     build:
       context: .
       dockerfile: ./apps/orders/Dockerfile
-      target: development
+      # target: development
     command: npm run start:dev orders
     env_file: 
       - ./apps/orders/.env
@@ -16,7 +16,7 @@ services:
       - .:/usr/src/app
       - /usr/src/app/node_modules
     ports:
-      - 3000:3000
+      - '3000:3000'
 
   mongodb-primary:
     image: 'docker.io/bitnami/mongodb:5.0'
@@ -39,11 +39,8 @@ services:
       - MONGODB_ADVERTISED_HOSTNAME=mongodb-secondary
       - MONGODB_REPLICA_SET_MODE=secondary
       - MONGODB_INITIAL_PRIMARY_HOST=mongodb-primary
-      - MONGODB_INITIAL_PRIMARY_PORT_NUMBER=27018
       - MONGODB_INITIAL_PRIMARY_ROOT_PASSWORD=password123
       - MONGODB_REPLICA_SET_KEY=replicasetkey123
-    ports:
-      - 27027:27018
 
   mongodb-arbiter:
     image: 'docker.io/bitnami/mongodb:5.0'
@@ -53,11 +50,8 @@ services:
       - MONGODB_ADVERTISED_HOSTNAME=mongodb-arbiter
       - MONGODB_REPLICA_SET_MODE=arbiter
       - MONGODB_INITIAL_PRIMARY_HOST=mongodb-primary
-      - MONGODB_INITIAL_PRIMARY_PORT_NUMBER=27018
       - MONGODB_INITIAL_PRIMARY_ROOT_PASSWORD=password123
       - MONGODB_REPLICA_SET_KEY=replicasetkey123
-    ports:
-      - 27037:27018
 
 volumes:
   mongodb_master_data:
