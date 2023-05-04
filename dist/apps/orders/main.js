@@ -25,14 +25,17 @@ class CreateOrderRequest {
 }
 __decorate([
     (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
 ], CreateOrderRequest.prototype, "name", void 0);
 __decorate([
     (0, class_validator_1.IsPositive)(),
+    (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", Number)
 ], CreateOrderRequest.prototype, "price", void 0);
 __decorate([
     (0, class_validator_1.IsPhoneNumber)(),
+    (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
 ], CreateOrderRequest.prototype, "mobile", void 0);
 exports.CreateOrderRequest = CreateOrderRequest;
@@ -69,17 +72,35 @@ let OrdersController = class OrdersController {
     constructor(ordersService) {
         this.ordersService = ordersService;
     }
+    getHello() {
+        return this.ordersService.getHello();
+    }
     async createOrder(request) {
         return this.ordersService.createOrder(request);
     }
+    async getOrders() {
+        return this.ordersService.getOrders();
+    }
 };
 __decorate([
-    (0, common_1.Post)(),
+    (0, common_1.Get)(),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", String)
+], OrdersController.prototype, "getHello", null);
+__decorate([
+    (0, common_1.Post)('create'),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [typeof (_b = typeof create_order_request_1.CreateOrderRequest !== "undefined" && create_order_request_1.CreateOrderRequest) === "function" ? _b : Object]),
     __metadata("design:returntype", Promise)
 ], OrdersController.prototype, "createOrder", null);
+__decorate([
+    (0, common_1.Get)('get'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], OrdersController.prototype, "getOrders", null);
 OrdersController = __decorate([
     (0, common_1.Controller)('orders'),
     __metadata("design:paramtypes", [typeof (_a = typeof orders_service_1.OrdersService !== "undefined" && orders_service_1.OrdersService) === "function" ? _a : Object])
@@ -104,8 +125,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.OrdersModule = void 0;
-const database_module_1 = __webpack_require__(/*! @app/common/database.module */ "./libs/common/src/database.module.ts");
-const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+const common_1 = __webpack_require__(/*! @app/common */ "./libs/common/src/index.ts");
+const common_2 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
 const config_1 = __webpack_require__(/*! @nestjs/config */ "@nestjs/config");
 const mongoose_1 = __webpack_require__(/*! @nestjs/mongoose */ "@nestjs/mongoose");
 const Joi = __webpack_require__(/*! joi */ "joi");
@@ -116,7 +137,7 @@ const orders_schema_1 = __webpack_require__(/*! ./schemas/orders.schema */ "./ap
 let OrdersModule = class OrdersModule {
 };
 OrdersModule = __decorate([
-    (0, common_1.Module)({
+    (0, common_2.Module)({
         imports: [
             config_1.ConfigModule.forRoot({
                 isGlobal: true,
@@ -126,12 +147,11 @@ OrdersModule = __decorate([
                 }),
                 envFilePath: './apps/orders/.env'
             }),
-            database_module_1.DatabaseModule,
+            common_1.DatabaseModule,
             mongoose_1.MongooseModule.forFeature([{ name: orders_schema_1.Order.name, schema: orders_schema_1.OrderSchema }])
         ],
         controllers: [orders_controller_1.OrdersController],
         providers: [orders_service_1.OrdersService, orders_repository_1.OrdersRepository],
-        exports: [orders_service_1.OrdersService]
     })
 ], OrdersModule);
 exports.OrdersModule = OrdersModule;
@@ -162,19 +182,19 @@ var OrdersRepository_1;
 var _a, _b;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.OrdersRepository = void 0;
-const abstract_repository_1 = __webpack_require__(/*! @app/common/abstract.repository */ "./libs/common/src/abstract.repository.ts");
-const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+const common_1 = __webpack_require__(/*! @app/common */ "./libs/common/src/index.ts");
+const common_2 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
 const mongoose_1 = __webpack_require__(/*! @nestjs/mongoose */ "@nestjs/mongoose");
 const mongoose_2 = __webpack_require__(/*! mongoose */ "mongoose");
 const orders_schema_1 = __webpack_require__(/*! ./schemas/orders.schema */ "./apps/orders/src/schemas/orders.schema.ts");
-let OrdersRepository = OrdersRepository_1 = class OrdersRepository extends abstract_repository_1.AbstractRepository {
+let OrdersRepository = OrdersRepository_1 = class OrdersRepository extends common_1.AbstractRepository {
     constructor(orderModel, connection) {
         super(orderModel, connection);
-        this.logger = new common_1.Logger(OrdersRepository_1.name);
+        this.logger = new common_2.Logger(OrdersRepository_1.name);
     }
 };
 OrdersRepository = OrdersRepository_1 = __decorate([
-    (0, common_1.Injectable)(),
+    (0, common_2.Injectable)(),
     __param(0, (0, mongoose_1.InjectModel)(orders_schema_1.Order.name)),
     __param(1, (0, mongoose_1.InjectConnection)()),
     __metadata("design:paramtypes", [typeof (_a = typeof mongoose_2.Model !== "undefined" && mongoose_2.Model) === "function" ? _a : Object, typeof (_b = typeof mongoose_2.Connection !== "undefined" && mongoose_2.Connection) === "function" ? _b : Object])
@@ -209,9 +229,20 @@ let OrdersService = class OrdersService {
     constructor(ordersRepository) {
         this.ordersRepository = ordersRepository;
     }
+    getHello() {
+        return 'Hello people';
+    }
     async createOrder(data) {
         try {
             return this.ordersRepository.create(data);
+        }
+        catch (error) {
+            throw error;
+        }
+    }
+    async getOrders() {
+        try {
+            return this.ordersRepository.findMany();
         }
         catch (error) {
             throw error;
@@ -246,9 +277,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var _a;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.OrderSchema = exports.Order = void 0;
-const abstract_schema_1 = __webpack_require__(/*! @app/common/abstract.schema */ "./libs/common/src/abstract.schema.ts");
+const common_1 = __webpack_require__(/*! @app/common */ "./libs/common/src/index.ts");
 const mongoose_1 = __webpack_require__(/*! @nestjs/mongoose */ "@nestjs/mongoose");
-let Order = class Order extends abstract_schema_1.AbstractDocument {
+let Order = class Order extends common_1.AbstractDocument {
 };
 __decorate([
     (0, mongoose_1.Prop)(),
@@ -271,10 +302,10 @@ exports.OrderSchema = mongoose_1.SchemaFactory.createForClass(Order);
 
 /***/ }),
 
-/***/ "./libs/common/src/abstract.repository.ts":
-/*!************************************************!*\
-  !*** ./libs/common/src/abstract.repository.ts ***!
-  \************************************************/
+/***/ "./libs/common/src/database/abstract.repository.ts":
+/*!*********************************************************!*\
+  !*** ./libs/common/src/database/abstract.repository.ts ***!
+  \*********************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -320,6 +351,9 @@ class AbstractRepository {
     async find(filterQuery) {
         return this.model.find(filterQuery, {}, { lean: true });
     }
+    async findMany() {
+        return this.model.find();
+    }
     async startTransaction() {
         const session = await this.connection.startSession();
         session.startTransaction();
@@ -331,10 +365,10 @@ exports.AbstractRepository = AbstractRepository;
 
 /***/ }),
 
-/***/ "./libs/common/src/abstract.schema.ts":
-/*!********************************************!*\
-  !*** ./libs/common/src/abstract.schema.ts ***!
-  \********************************************/
+/***/ "./libs/common/src/database/abstract.schema.ts":
+/*!*****************************************************!*\
+  !*** ./libs/common/src/database/abstract.schema.ts ***!
+  \*****************************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
@@ -366,10 +400,10 @@ exports.AbstractDocument = AbstractDocument;
 
 /***/ }),
 
-/***/ "./libs/common/src/database.module.ts":
-/*!********************************************!*\
-  !*** ./libs/common/src/database.module.ts ***!
-  \********************************************/
+/***/ "./libs/common/src/database/database.module.ts":
+/*!*****************************************************!*\
+  !*** ./libs/common/src/database/database.module.ts ***!
+  \*****************************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
@@ -399,6 +433,35 @@ DatabaseModule = __decorate([
     })
 ], DatabaseModule);
 exports.DatabaseModule = DatabaseModule;
+
+
+/***/ }),
+
+/***/ "./libs/common/src/index.ts":
+/*!**********************************!*\
+  !*** ./libs/common/src/index.ts ***!
+  \**********************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __exportStar = (this && this.__exportStar) || function(m, exports) {
+    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+__exportStar(__webpack_require__(/*! ./database/abstract.repository */ "./libs/common/src/database/abstract.repository.ts"), exports);
+__exportStar(__webpack_require__(/*! ./database/abstract.schema */ "./libs/common/src/database/abstract.schema.ts"), exports);
+__exportStar(__webpack_require__(/*! ./database/database.module */ "./libs/common/src/database/database.module.ts"), exports);
 
 
 /***/ }),
