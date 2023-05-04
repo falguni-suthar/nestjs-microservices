@@ -6,8 +6,18 @@ import { OrdersService } from './orders.service';
 export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}
 
-  @Post()
+  @Get()
+  getHello(): string {
+    return this.ordersService.getHello();
+  }
+
+  @Post('create')
   async createOrder(@Body() request: CreateOrderRequest){
     return this.ordersService.createOrder(request);
+  }
+
+  @Get('get')
+  async getOrders(){
+    return this.ordersService.getOrders();
   }
 }

@@ -1,10 +1,9 @@
-version: '3'
 services:
   orders:
     build:
       context: .
       dockerfile: ./apps/orders/Dockerfile
-      # target: development
+      target: development
     command: npm run start:dev orders
     env_file: 
       - ./apps/orders/.env
@@ -17,7 +16,6 @@ services:
       - /usr/src/app/node_modules
     ports:
       - '3000:3000'
-
   mongodb-primary:
     image: 'docker.io/bitnami/mongodb:5.0'
     environment:
@@ -26,7 +24,7 @@ services:
       - MONGODB_ROOT_PASSWORD=password123
       - MONGODB_REPLICA_SET_KEY=replicasetkey123
     ports:
-      - 27018:27018
+      - '27017:27017'
 
     volumes:
       - 'mongodb_master_data:/bitnami/mongodb'
