@@ -1,7 +1,6 @@
-import { AbstractRepository } from "@app/common/abstract.repository";
+import { AbstractRepository } from "@app/common";
 import { Injectable, Logger } from "@nestjs/common";
 import { InjectConnection, InjectModel } from "@nestjs/mongoose";
-import { InjectRepository } from "@nestjs/typeorm";
 import { Connection, Model } from "mongoose";
 import { CreateOrderRequest } from "./dto/create-order-request";
 import { Order } from "./schemas/orders.schema";

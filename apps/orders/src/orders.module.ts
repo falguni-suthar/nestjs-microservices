@@ -1,4 +1,4 @@
-import { DatabaseModule } from '@app/common/database.module';
+import { DatabaseModule } from '@app/common';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
@@ -23,6 +23,5 @@ import { Order, OrderSchema } from './schemas/orders.schema';
   ],
   controllers: [OrdersController],
   providers: [OrdersService, OrdersRepository],
-  exports: [OrdersService]
 })
 export class OrdersModule {}
